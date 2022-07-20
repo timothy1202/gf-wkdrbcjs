@@ -209,18 +209,58 @@ void render()
 //#include <SDL.h>
 #include "main.h"
 
+//	SDL 함수?
 SDL_Window* g_pWindow = 0;
 SDL_Renderer* g_pRenderer = 0;
 
+//	g_bRunning의 역할?
+bool g_bRunning = false;
+
+
+// main에서 Init을 함수로 빼냄
+bool init(const char* title, int xpos, int ypos,
+	int height, int width, int flags)
+{
+	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
+	{
+		g_pWindow = SDL_CreateWindow(title,
+			xpos, ypos,
+			height, width, 
+			flags);
+
+		if (g_pWindow != 0)
+		{
+			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+		}
+	}
+	else
+	{
+		return false;
+	}
+
+	// 화면 그려줄 값 g_pRenderer을 초기화
+	SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255);
+
+	return true;
+}
+
+// Init에서 설정된g_pRenderer 값으로 화면을 그려줄 것임.
+void render()
+{
+	SDL_RenderClear(g_pRenderer);
+	SDL_RenderPresent(g_pRenderer);
+}
+
 int main(int argc, char* args[])
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) 
+#pragma region MainInInit
+	/*if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
 
 		g_pWindow = SDL_CreateWindow("Setting up SDL",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			640, 480, 
+			640, 480, //화면 크기 비율? 
 			SDL_WINDOW_SHOWN);
 
 		if (g_pWindow != 0) 
@@ -248,5 +288,38 @@ int main(int argc, char* args[])
 	//5초 대기후 종료
 	SDL_Delay(5000);
 	SDL_Quit();
+	return 0;*/
+
+#pragma endregion
+
+
+#pragma region MainOutInit
+
+	if (init("Breaking Up HelloSDL",
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		640, 480,
+		SDL_WINDOW_SHOWN))
+	{
+		g_bRunning = true;
+	}
+	else
+	{
+		return 1; // something's wrong
+	}
+
+	while (g_bRunning)
+	{
+		// handle input - update - render
+		render();
+	}
+	// g_bRunning의 역할 - while 문의 조건
+	// render함수를 동작하기 위해 통제하기 위해서 사용
+	// g_bRunning는 메인 밖으로 빼낸 Init(true or false를 반환)의 반환값에 의해 true로 변경되고 while문의 조건을 만족하여 화면을 그려주는 render함수가 동작하게 됨.
+
+	SDL_Quit();
 	return 0;
+
+#pragma endregion
 }
+
