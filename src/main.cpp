@@ -2,7 +2,7 @@
 //
 // written by changhoonpark@gmail.com
 
-
+/*
 #include "main.h"
 
 
@@ -204,4 +204,49 @@ void render()
 	filledCircleColor(g_pRenderer, 300, 300, 50, 0xFFFF0000);
 
 	SDL_RenderPresent(g_pRenderer);
+}*/
+
+//#include <SDL.h>
+#include "main.h"
+
+SDL_Window* g_pWindow = 0;
+SDL_Renderer* g_pRenderer = 0;
+
+int main(int argc, char* args[])
+{
+	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) 
+	{
+
+		g_pWindow = SDL_CreateWindow("PP01.HelloSDL",
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED,
+			640, 480, 
+			SDL_WINDOW_SHOWN);
+
+		if (g_pWindow != 0) 
+		{
+			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+		}
+	}
+	else 
+	{
+		return 1;
+	}
+
+	//	화면 지우기
+	//	r,g,b,a a는 투명도(0(투명)~255(불투명))
+	//  r,g,b,a 값을 g_pRenderer에 설정
+	SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255); //검은색 배경
+	//SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 255, 255); //파란 배경
+	//SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 255, 255); //보라색 배경
+	//SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255); //하얀색 배경
+
+	// g_pRenderer값으로 화면을 그려줌
+	SDL_RenderClear(g_pRenderer);
+	SDL_RenderPresent(g_pRenderer);
+
+	//5초 대기후 종료
+	SDL_Delay(5000);
+	SDL_Quit();
+	return 0;
 }
