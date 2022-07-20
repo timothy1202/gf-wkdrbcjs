@@ -35,11 +35,10 @@ bool Game::init(const char* title, int xpos, int ypos,
 
 
 #pragma region Texture 생성
-	//  로드 파일을 RAM에 로드
 	SDL_Surface* pTempSurface = SDL_LoadBMP("Assets/rider.bmp");
 	
-	//SDL_CreateTextureFromSurface 는 pTempSurface에 로드된 파일을 PU에 로드
 	m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, pTempSurface);
+
 	SDL_FreeSurface(pTempSurface);
 #pragma endregion
 	
@@ -85,9 +84,12 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(m_pRenderer);
-	SDL_RenderPresent(m_pRenderer);
 
 	SDL_RenderCopy(m_pRenderer, m_pTexture, &m_sourceRectangle, &m_destinationRectangle);
+
+	SDL_RenderPresent(m_pRenderer);
+
+	
 }
 
 bool Game::running()

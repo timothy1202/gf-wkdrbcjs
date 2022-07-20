@@ -220,9 +220,9 @@ int main(int argc, char* args[])
 		480, 640, 0);
 	while (g_game->running())
 	{
-		g_game->getCommand();
+		g_game->getCommand(); 
 		g_game->handleEvents();
-		g_game->update();
+		//g_game->update();
 		g_game->render();
 	}
 	g_game->clean();
