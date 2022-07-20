@@ -214,10 +214,10 @@ SDL_Renderer* g_pRenderer = 0;
 
 int main(int argc, char* args[])
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) 
+	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) 
 	{
 
-		g_pWindow = SDL_CreateWindow("PP01.HelloSDL",
+		g_pWindow = SDL_CreateWindow("Setting up SDL",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
 			640, 480, 
