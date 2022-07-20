@@ -206,7 +206,7 @@ void render()
 	SDL_RenderPresent(g_pRenderer);
 }*/
 
-//#include <SDL.h>
+//#include <SDL.h> -> main.h 안에 <SDL2/SDL.h> 로 참조되어 있음
 #include "main.h"
 #include <conio.h>
 
@@ -216,7 +216,6 @@ SDL_Renderer* g_pRenderer = 0;
 
 //	g_bRunning의 역할?
 bool g_bRunning = false;
-
 
 // main에서 Init을 함수로 빼냄
 bool init(const char* title, int xpos, int ypos,
@@ -270,10 +269,11 @@ void update()
 	SDL_Delay(1000);
 }
 
+#pragma region MainInInit
+/*
 int main(int argc, char* args[])
 {
-#pragma region MainInInit
-	/*if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
 
 		g_pWindow = SDL_CreateWindow("Setting up SDL",
@@ -307,12 +307,14 @@ int main(int argc, char* args[])
 	//5초 대기후 종료
 	SDL_Delay(5000);
 	SDL_Quit();
-	return 0;*/
-
+	return 0;
+}*/
 #pragma endregion
 
-#pragma region MainOutInit
 
+#pragma region MainOutInit
+int main(int argc, char* args[])
+{
 	if (init("Breaking Up HelloSDL",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
@@ -338,6 +340,5 @@ int main(int argc, char* args[])
 
 	SDL_Quit();
 	return 0;
-
-#pragma endregion
 }
+#pragma endregion
