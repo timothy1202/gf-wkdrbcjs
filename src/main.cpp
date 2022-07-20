@@ -209,136 +209,102 @@ void render()
 //#include <SDL.h> -> main.h 안에 <SDL2/SDL.h> 로 참조되어 있음
 #include "main.h"
 #include <conio.h>
+#include "Game.h"
 
-//	SDL 함수?
-SDL_Window* g_pWindow = 0;
-SDL_Renderer* g_pRenderer = 0;
-
-//	g_bRunning의 역할?
-bool g_bRunning = false;
+Game* g_game = 0;
 
 // main에서 Init을 함수로 빼냄
-bool init(const char* title, int xpos, int ypos,
+bool Game::init(const char* title, int xpos, int ypos,
 	int height, int width, int flags)
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
-	{
-		g_pWindow = SDL_CreateWindow(title,
-			xpos, ypos,
-			height, width, 
-			flags);
+	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+		m_pWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+		if (m_pWindow != 0) {
+			m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
 
-		if (g_pWindow != 0)
-		{
-			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+			if (m_pRenderer != 0) {
+				SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 255, 255);
+			}
+			else {
+				return false; // 랜더러 생성 실패
+			}
+		}
+		else {
+			return false; // 윈도우 생설 실패 l
 		}
 	}
-	else
-	{
-		return false;
+	else {
+		return false; // SDL 초기화 실패
 	}
 
-	// 화면 그려줄 값 g_pRenderer을 초기화
-	SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255);
-
+	m_bRunning = true;
 	return true;
 }
-
-// Init에서 설정된g_pRenderer 값으로 화면을 그려줄 것임.
-void render()
-{
-	SDL_RenderClear(g_pRenderer);
-	SDL_RenderPresent(g_pRenderer);
-}
-
 // 키입력
-void getCommand()
+void Game::getCommand()
 {
 	if (_kbhit())
 	{
 		if (_getch() == 27)
 		{
-			g_bRunning = false;
+			m_bRunning = false;
 		}
 	}
 }
 
-void update()
+void Game::update()
 {
-	SDL_SetRenderDrawColor(g_pRenderer, rand() % 256, rand() % 256, rand() % 256, 255);
-	SDL_Delay(1000);
 }
 
-#pragma region MainInInit
-/*
-int main(int argc, char* args[])
+// Init에서 설정된g_pRenderer 값으로 화면을 그려줄 것임.
+void Game::render()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
+	SDL_RenderClear(m_pRenderer);
+	SDL_RenderPresent(m_pRenderer);
+}
+
+bool Game::running()
+{
+	return m_bRunning;
+}
+
+void Game::handleEvents()
+{
+	SDL_Event event;
+	if (SDL_PollEvent(&event)) 
 	{
-
-		g_pWindow = SDL_CreateWindow("Setting up SDL",
-			SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED,
-			640, 480, //화면 크기 비율?
-			SDL_WINDOW_SHOWN);
-
-		if (g_pWindow != 0)
+		switch (event.type) 
 		{
-			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+			case SDL_QUIT:
+				m_bRunning = false;
+				break;
+			default:
+				break;
 		}
 	}
-	else
-	{
-		return 1;
-	}
+}
 
-	//	화면 지우기
-	//	r,g,b,a a는 투명도(0(투명)~255(불투명))
-	//  r,g,b,a 값을 g_pRenderer에 설정
-	SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255); //검은색 배경
-	//SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 255, 255); //파란 배경
-	//SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 255, 255); //보라색 배경
-	//SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255); //하얀색 배경
-
-	// g_pRenderer값으로 화면을 그려줌
-	SDL_RenderClear(g_pRenderer);
-	SDL_RenderPresent(g_pRenderer);
-
-	//5초 대기후 종료
-	SDL_Delay(5000);
+void Game::clean()
+{
+	SDL_DestroyWindow(m_pWindow);
+	SDL_DestroyRenderer(m_pRenderer);
 	SDL_Quit();
-	return 0;
-}*/
-#pragma endregion
+}
 
-
-#pragma region MainOutInit
+#pragma region GameClassCreate
 int main(int argc, char* args[])
 {
-	if (init("Breaking Up HelloSDL",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		640, 480,
-		SDL_WINDOW_SHOWN))
+	g_game = new Game();
+	g_game->init("GameClass", 100, 100, 640, 480, 0);
+	while (g_game->running())
 	{
-		g_bRunning = true;
+		g_game->getCommand();
+		g_game->handleEvents();
+		g_game->update();
+		g_game->render();
 	}
-	else
-	{
-		return 1; // something's wrong
-	}
-
-	while (g_bRunning)
-	{
-		getCommand();
-		render();
-		update();
-	}
-	// g_bRunning의 역할 - while 문의 조건
-	// render함수를 동작하기 위해 통제하기 위해서 사용
-	// g_bRunning는 메인 밖으로 빼낸 Init(true or false를 반환)의 반환값에 의해 true로 변경되고 while문의 조건을 만족하여 화면을 그려주는 render함수가 동작하게 됨.
-
-	SDL_Quit();
+	g_game->clean();
 	return 0;
+
 }
 #pragma endregion
