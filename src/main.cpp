@@ -208,6 +208,7 @@ void render()
 
 //#include <SDL.h>
 #include "main.h"
+#include <conio.h>
 
 //	SDL 함수?
 SDL_Window* g_pWindow = 0;
@@ -251,6 +252,24 @@ void render()
 	SDL_RenderPresent(g_pRenderer);
 }
 
+// 키입력
+void getCommand()
+{
+	if (_kbhit())
+	{
+		if (_getch() == 27)
+		{
+			g_bRunning = false;
+		}
+	}
+}
+
+void update()
+{
+	SDL_SetRenderDrawColor(g_pRenderer, rand() % 256, rand() % 256, rand() % 256, 255);
+	SDL_Delay(1000);
+}
+
 int main(int argc, char* args[])
 {
 #pragma region MainInInit
@@ -260,15 +279,15 @@ int main(int argc, char* args[])
 		g_pWindow = SDL_CreateWindow("Setting up SDL",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			640, 480, //화면 크기 비율? 
+			640, 480, //화면 크기 비율?
 			SDL_WINDOW_SHOWN);
 
-		if (g_pWindow != 0) 
+		if (g_pWindow != 0)
 		{
 			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
 		}
 	}
-	else 
+	else
 	{
 		return 1;
 	}
@@ -292,7 +311,6 @@ int main(int argc, char* args[])
 
 #pragma endregion
 
-
 #pragma region MainOutInit
 
 	if (init("Breaking Up HelloSDL",
@@ -310,8 +328,9 @@ int main(int argc, char* args[])
 
 	while (g_bRunning)
 	{
-		// handle input - update - render
+		getCommand();
 		render();
+		update();
 	}
 	// g_bRunning의 역할 - while 문의 조건
 	// render함수를 동작하기 위해 통제하기 위해서 사용
@@ -322,4 +341,3 @@ int main(int argc, char* args[])
 
 #pragma endregion
 }
-
