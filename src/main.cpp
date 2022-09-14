@@ -221,6 +221,14 @@ bool g_bRunning = false;
 bool init(const char* title, int xpos, int ypos,
 	int height, int width, int flags)
 {
+	//	새로운 파일 로드
+	/** 강아지 파일*/
+	SDL_Surface* pTempSurface = SDL_LoadBMP("Assets/animate.bmp");
+
+	/*m_sourceRectangle.w = 128;
+	m_sourceRectangle.h = 82;
+	SDL_QueryTexture(m_pTexture, NULL, NULL, &m_sourceRectangle.w, &m_sourceRectangle.h);*/
+
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
 		g_pWindow = SDL_CreateWindow(title,
@@ -269,8 +277,9 @@ void update()
 	SDL_Delay(1000);
 }
 
+
 #pragma region MainInInit
-/*
+
 int main(int argc, char* args[])
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
@@ -308,12 +317,13 @@ int main(int argc, char* args[])
 	SDL_Delay(5000);
 	SDL_Quit();
 	return 0;
-}*/
+}
 #pragma endregion
 
 
+//	화면 색 랜덤 출력
 #pragma region MainOutInit
-int main(int argc, char* args[])
+/*int main(int argc, char* args[])
 {
 	if (init("Breaking Up HelloSDL",
 		SDL_WINDOWPOS_CENTERED,
@@ -340,5 +350,5 @@ int main(int argc, char* args[])
 
 	SDL_Quit();
 	return 0;
-}
+}*/
 #pragma endregion
